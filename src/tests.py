@@ -40,6 +40,7 @@ class SigmundTests(unittest.TestCase):
         testData = {"blah": 123}
         token    = sigmund.generate(testData)
         
+        print token
         #this might be brittle...
         # len(sha1 + sha1 + epoch)
         expectedLength = 112 + len(str(int(math.floor(time.time()))))
@@ -48,6 +49,28 @@ class SigmundTests(unittest.TestCase):
         self.assertTrue(
             sigmund.validate(token, testData),
             'can generate a simple token and validate'
+        )
+        
+    def testTokenValidation (self):
+        
+        sigmund = Sigmund()
+        
+        testData = {"blah": 123}
+        
+        self.assertFalse(
+            sigmund.validate(
+                "",
+                testData
+            ),
+            'validate fails an empty token'
+        )
+        
+        self.assertFalse(
+            sigmund.validate(
+                "",
+                testData
+            ),
+            'validate fails an empty token'
         )
 
 if __name__ == "__main__":
