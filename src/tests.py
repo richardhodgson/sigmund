@@ -4,6 +4,8 @@ TODO
  - secrets
 """
 import unittest
+import math
+import time
 from sigmund import Sigmund
 
 class SigmundTests(unittest.TestCase):
@@ -37,6 +39,11 @@ class SigmundTests(unittest.TestCase):
         
         testData = {"blah": 123}
         token    = sigmund.generate(testData)
+        
+        #this might be brittle...
+        # len(sha1 + sha1 + epoch)
+        expectedLength = 112 + len(str(int(math.floor(time.time()))))
+        self.assertEquals(expectedLength, len(token), "Token is expected length")
         
         self.assertTrue(
             sigmund.validate(token, testData),
