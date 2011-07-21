@@ -9,11 +9,13 @@ import hashlib
 import random
 import math
 import time
+import re
 
 class Sigmund():
     
     secret = ""
     random_amount = 102400
+    tokenExpiryTime = 300
     
     def generate (self, params):
         
@@ -29,6 +31,9 @@ class Sigmund():
         return salt_hash + signature_hash + str(timestamp)
         
     def validate (self, token, params):
+        
+        if not (self.__isTokenExpectedFormat(token)):
+            return False
         
         salt = token[0:56]
         signature = token[56:112]
@@ -48,4 +53,34 @@ class Sigmund():
     
     def __hash (self, string):
         return hashlib.sha224(string).hexdigest()
+        
+    def __isTokenExpectedFormat (self, token):
+        
+        length = len(token)
+        
+        # len(sha224 + sha224 + epoch)
+        if (length < 122):
+            return False
+        
+        stripHashesFromToken = token[112:]
+        
+        try:
+            timestamp = int(stripHashesFromToken)
+        except ValueError:
+            return False
+        
+        expiresAt = time.time() - self.tokenExpiryTime
+        
+        if timestamp < expiresAt:
+            return False
+        
+        return True
+  
+  
+  
+  
+  
+  
+  
+  
   

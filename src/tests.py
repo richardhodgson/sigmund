@@ -6,6 +6,7 @@ TODO
 import unittest
 import math
 import time
+from dateutil.parser import parse
 from sigmund import Sigmund
 
 class SigmundTests(unittest.TestCase):
@@ -40,9 +41,8 @@ class SigmundTests(unittest.TestCase):
         testData = {"blah": 123}
         token    = sigmund.generate(testData)
         
-        print token
         #this might be brittle...
-        # len(sha1 + sha1 + epoch)
+        # len(sha224 + sha224 + epoch)
         expectedLength = 112 + len(str(int(math.floor(time.time()))))
         self.assertEquals(expectedLength, len(token), "Token is expected length")
         
@@ -65,13 +65,70 @@ class SigmundTests(unittest.TestCase):
             'validate fails an empty token'
         )
         
+        
         self.assertFalse(
             sigmund.validate(
-                "",
+                '22c8074a4e99305c9afee5129df44bfde7bf7e24dfc7f51d3697af10a151734ace0166779062da40523a037e2e8aa5a03daf5a1c5e4ccb2e131125666',
                 testData
             ),
-            'validate fails an empty token'
+            'validate fails a short token'
         )
+        
+        token = sigmund.generate(testData)
+        
+        self.assertFalse(
+            sigmund.validate(
+                token[:-1],
+                testData
+            ),
+            'validate fails a short known valid token'
+        )
+        
+        self.assertFalse(
+            sigmund.validate(
+                token + "a",
+                testData
+            ),
+            'validate fails a token with an invalid timestamp at the end'
+        )
+        
+        timestamp5MinutesAgo = int(time.time()) - 270
+        
+        self.assertFalse(
+            sigmund.validate(
+                token[112:] + str(timestamp5MinutesAgo),
+                testData
+            ),
+            'validate fails a token older than 5 minutes'
+        )
+        
+        timestamp4andHalfMinutesAgo = int(time.time()) - 270
+        
+        """
+        #TODO -> not sure this will work...
+        # is timestamp used in the salt generation?
+        self.assertTrue(
+            sigmund.validate(
+                token[112:] + str(timestamp4andHalfMinutesAgo),
+                testData
+            ),
+            'validate passes a token 4 and a half minutes old'
+        )
+        """
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
 
 if __name__ == "__main__":
     unittest.main()
