@@ -114,12 +114,11 @@ class SigmundTests(unittest.TestCase):
         
     def testSimpleSecret (self):
         
-        sigmund_no_secret = Sigmund()
-        
-        sigmund_secret   = Sigmund()
+        sigmund_no_secret     = Sigmund()
+        sigmund_secret        = Sigmund()
         sigmund_secret.secret = "blahblah"
         
-        testData     = {"blah": 123}
+        testData     = {"blah": 1234}
         token        = sigmund_no_secret.generate(testData)
         token_secret = sigmund_secret.generate(testData)
         
