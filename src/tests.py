@@ -178,7 +178,7 @@ class SigmundTests(unittest.TestCase):
             sigmund.getRotatedSecret(secrets, 86400),
             'midnight chooses the first secret'
         )
-        """
+        
     def testRotatingSecrets (self):
         
         sigmund = Sigmund()
@@ -192,7 +192,7 @@ class SigmundTests(unittest.TestCase):
             sigmund.validate(token, testData),
             'can validate a token against multiple secrets'
         )
-        """
+        
   
 
 if __name__ == "__main__":

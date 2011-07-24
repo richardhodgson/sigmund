@@ -100,6 +100,8 @@ class Sigmund():
         n.b. I'm sure theres a better way to do this than a loop...
         """
         
+        timestamp = float(timestamp)
+        
         fullDay = 86400
         
         numberOfSecrets = len(secrets)
@@ -112,7 +114,7 @@ class Sigmund():
         tokenSeconds  = (tokenDateTime.hour * 3600) + (tokenDateTime.minute * 60) + tokenDateTime.second
         partitionSize = fullDay / numberOfSecrets
         
-        for group in range(len(secrets)):
+        for group in range(numberOfSecrets):
             if (tokenSeconds < ((group+1) * partitionSize)):
                 return secrets[group]
   
