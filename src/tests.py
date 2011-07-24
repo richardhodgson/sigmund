@@ -193,7 +193,6 @@ class SigmundTests(unittest.TestCase):
             'can validate a token against multiple secrets'
         )
         
-  
 
 if __name__ == "__main__":
     unittest.main()
