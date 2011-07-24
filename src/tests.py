@@ -136,6 +136,64 @@ class SigmundTests(unittest.TestCase):
             sigmund_secret.validate(token_secret, testData),
             'can validate a token with a secret'
         )
+        
+    def testRotatedSecrets (self):
+        
+        sigmund = Sigmund()
+        
+        secrets = ['a', 'b', 'c', 'd']
+        
+        self.assertEquals(
+            'a',
+            sigmund.getRotatedSecret(secrets, 1),
+            '1am hour chooses the first secret'
+        )
+        
+        self.assertEquals(
+            'a',
+            sigmund.getRotatedSecret(secrets, 3600),
+            '2am hour chooses the first secret'
+        )
+        
+        self.assertEquals(
+            'b',
+            sigmund.getRotatedSecret(secrets, 21600),
+            '6am hour chooses the second secret'
+        )
+        
+        self.assertEquals(
+            'c',
+            sigmund.getRotatedSecret(secrets, 43200),
+            '12pm chooses the third secret'
+        )
+        
+        self.assertEquals(
+            'd',
+            sigmund.getRotatedSecret(secrets, 64800),
+            '6pm chooses the final secret'
+        )
+        
+        self.assertEquals(
+            'a',
+            sigmund.getRotatedSecret(secrets, 86400),
+            'midnight chooses the first secret'
+        )
+        """
+    def testRotatingSecrets (self):
+        
+        sigmund = Sigmund()
+        
+        testData = {"blah": 'test'}
+        sigmund.secret = ['a', 'b', 'c', 'd']
+        
+        token = sigmund.generate(testData)
+        
+        self.assertTrue(
+            sigmund.validate(token, testData),
+            'can validate a token against multiple secrets'
+        )
+        """
+  
 
 if __name__ == "__main__":
     unittest.main()

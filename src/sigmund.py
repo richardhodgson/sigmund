@@ -10,6 +10,7 @@ import random
 import math
 import time
 import re
+from datetime import datetime
 
 class Sigmund():
     
@@ -77,9 +78,43 @@ class Sigmund():
         return True
         
     def __generateSignatureHash (self, params, salt, timestamp):
+        
         plainSignature = self.generatePlainSignature(params)
-        return self.__hash(salt + plainSignature + timestamp + str(self.secret))
-  
+        secret         = self.secret
+        
+        if isinstance(secret, list):
+            secret = self.getRotatedSecret(secret, timestamp)
+        
+        return self.__hash(salt + plainSignature + timestamp + secret)
+        
+    def getRotatedSecret (self, secrets, timestamp):
+        """
+        Takes a list of secrets and chooses one depending on timestamp.
+        
+        Choice is made by dividing a day by number of secrets to create groups.
+        The timestamp is checked for the time of day it was created at, which
+        is then mapped to the relevant group.
+        
+        The secret is return for the group that is matched
+        
+        n.b. I'm sure theres a better way to do this than a loop...
+        """
+        
+        fullDay = 86400
+        
+        numberOfSecrets = len(secrets)
+        
+        tokenDateTime = datetime.fromtimestamp(timestamp)
+        
+        dayStartFormatted = tokenDateTime.strftime("%a %b %d 00:00:00 %Y")
+        dayStart          = time.mktime(time.strptime(dayStartFormatted))
+        
+        tokenSeconds  = (tokenDateTime.hour * 3600) + (tokenDateTime.minute * 60) + tokenDateTime.second
+        partitionSize = fullDay / numberOfSecrets
+        
+        for group in range(len(secrets)):
+            if (tokenSeconds < ((group+1) * partitionSize)):
+                return secrets[group]
   
   
   
