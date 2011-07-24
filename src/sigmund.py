@@ -10,6 +10,7 @@ import random
 import math
 import time
 import re
+from datetime import datetime
 
 class Sigmund():
     
@@ -23,10 +24,10 @@ class Sigmund():
         timestamp = str(int(math.floor(time.time())))
         
         randomNumber = int(math.ceil(random.uniform(1, self.random_amount)))
-        salt         = signature + str(randomNumber) + timestamp + str(self.secret)
+        salt         = signature + str(randomNumber) + timestamp
         
         salt_hash      = self.__hash(salt)
-        signature_hash = self.__hash(salt_hash + signature + timestamp)
+        signature_hash = self.__generateSignatureHash(params, salt_hash, timestamp)
         
         return salt_hash + signature_hash + str(timestamp)
         
@@ -39,7 +40,7 @@ class Sigmund():
         signature = token[56:112]
         timestamp = token[112:]
         
-        regenerated = self.__hash(salt + self.generatePlainSignature(params) + timestamp)
+        regenerated = self.__generateSignatureHash(params, salt, timestamp)
         
         if (signature == regenerated):
             return True
@@ -75,8 +76,40 @@ class Sigmund():
             return False
         
         return True
-  
-  
+        
+    def __generateSignatureHash (self, params, salt, timestamp):
+        
+        plainSignature = self.generatePlainSignature(params)
+        secret         = self.secret
+        
+        if isinstance(secret, list):
+            secret = self.getRotatedSecret(secret, timestamp)
+        
+        return self.__hash(salt + plainSignature + timestamp + secret)
+        
+    def getRotatedSecret (self, secrets, timestamp):
+        """
+        Takes a list of secrets and chooses one depending on timestamp.
+        
+        Choice is made by dividing a day by number of secrets to create groups.
+        The timestamp is checked for the time of day it was created at, which
+        is then mapped to the relevant group.
+        
+        The secret is return for the group that is matched
+        
+        n.b. I'm sure theres a better way to do this than a loop...
+        """
+        fullDay = 86400
+        
+        numberOfSecrets = len(secrets)
+        tokenDateTime   = datetime.fromtimestamp(float(timestamp))
+        
+        tokenSeconds    = (tokenDateTime.hour * 3600) + (tokenDateTime.minute * 60) + tokenDateTime.second
+        partitionSize   = fullDay / numberOfSecrets
+        
+        for group in range(numberOfSecrets):
+            if (tokenSeconds < ((group+1) * partitionSize)):
+                return secrets[group]
   
   
   
