@@ -104,30 +104,13 @@ class SigmundTests(unittest.TestCase):
         
         timestamp4andHalfMinutesAgo = int(time.time()) - 270
         
-        """
-        #TODO -> not sure this will work...
-        # is timestamp used in the salt generation?
-        self.assertTrue(
+        self.assertFalse(
             sigmund.validate(
                 token[112:] + str(timestamp4andHalfMinutesAgo),
                 testData
             ),
-            'validate passes a token 4 and a half minutes old'
+            'timestamp cannot be altered, used in signature generation'
         )
-        """
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
         
 
 if __name__ == "__main__":

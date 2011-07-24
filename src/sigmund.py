@@ -20,13 +20,13 @@ class Sigmund():
     def generate (self, params):
         
         signature = self.generatePlainSignature(params)
-        timestamp = int(math.floor(time.time()))
+        timestamp = str(int(math.floor(time.time())))
         
         randomNumber = int(math.ceil(random.uniform(1, self.random_amount)))
-        salt         = signature + str(randomNumber) + str(timestamp) + str(self.secret)
+        salt         = signature + str(randomNumber) + timestamp + str(self.secret)
         
         salt_hash      = self.__hash(salt)
-        signature_hash = self.__hash(salt_hash + signature)
+        signature_hash = self.__hash(salt_hash + signature + timestamp)
         
         return salt_hash + signature_hash + str(timestamp)
         
@@ -35,13 +35,13 @@ class Sigmund():
         if not (self.__isTokenExpectedFormat(token)):
             return False
         
-        salt = token[0:56]
+        salt      = token[0:56]
         signature = token[56:112]
+        timestamp = token[112:]
         
-        #don't need this yet
-        #timestamp = token[112:]
+        regenerated = self.__hash(salt + self.generatePlainSignature(params) + timestamp)
         
-        if (signature == self.__hash(salt + self.generatePlainSignature(params))):
+        if (signature == regenerated):
             return True
         
         return False
