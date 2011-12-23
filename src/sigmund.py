@@ -34,9 +34,6 @@ class Sigmund():
         
     def validate (self, token, params):
         
-        if not (self.__isTokenExpectedFormat(token)):
-            return False
-
         tokenParts = self.unserialiseToken(token)
 
         salt      = tokenParts[0]
@@ -59,17 +56,7 @@ class Sigmund():
     
     def __hash (self, string):
         return hashlib.sha224(string).hexdigest()
-        
-    def __isTokenExpectedFormat (self, token):
-        
-        length = len(token)
-        
-        # len(sha224 + sha224 + epoch)
-        if (length < 122):
-            return False
-        
-        return True
-    
+
     def __hasTokenExpired (self, timestamp):
         try:
             timestamp = int(timestamp)
