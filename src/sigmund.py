@@ -2,7 +2,7 @@
 TODO
  - simple salt and signature positions (based on pieces... max 56/2)
  - rotating positions (and position map generation)
- - hooks for token strategy (i/o) e.g. can be subclassed
+ - hooks for token template (i/o) e.g. can be subclassed
 """
 import hashlib
 import random
@@ -30,16 +30,18 @@ class Sigmund():
         salt_hash      = self.__hash(salt)
         signature_hash = self.__generateSignatureHash(params, salt_hash, timestamp)
         
-        return salt_hash + signature_hash + str(timestamp)
+        return self.serialiseToken(salt_hash, signature_hash, str(timestamp))
         
     def validate (self, token, params):
         
         if not (self.__isTokenExpectedFormat(token)):
             return False
         
-        salt      = token[0:56]
-        signature = token[56:112]
-        timestamp = token[112:]
+        tokenParts = self.unserialiseToken(token)
+
+        salt      = tokenParts[0]
+        signature = tokenParts[1]
+        timestamp = tokenParts[2]
         
         regenerated = self.__generateSignatureHash(params, salt, timestamp)
         
@@ -111,6 +113,18 @@ class Sigmund():
         for group in range(numberOfSecrets):
             if (tokenSeconds < ((group+1) * partitionSize)):
                 return secrets[group]
+
+    def serialiseToken (self, salt_hash, signature_hash, timestamp):
+        return salt_hash + signature_hash + timestamp
+
+    def unserialiseToken (self, token):
+
+        salt      = token[0:56]
+        signature = token[56:112]
+        timestamp = token[112:]
+
+        return [salt, signature, timestamp]
+
 
 def generate_secrets_to_file (path):
     """

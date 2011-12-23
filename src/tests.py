@@ -280,7 +280,7 @@ class SigmundTests(unittest.TestCase):
 
         s1.secret = s2.secret = 'abcd'
 
-        testData = {"hello": "world"}       
+        testData = {"hello": "world"}
 
         token = s1.generate(testData)
 
@@ -288,6 +288,21 @@ class SigmundTests(unittest.TestCase):
             s2.validate(token, testData),
             "token isn't bound to the instance of Sigmund that generated it"
         )
+    
+    def testSubclassTokenTemplate (self):
+
+        customSigmund = CustomSigmund()
+        customSigmund.secret = 'abcd'
+
+        testData = {"hello": "world"}
+
+        token = customSigmund.generate(testData)
+
+        self.assertTrue(
+            customSigmund.validate(token, testData),
+            "subclasses can override the token template"
+        )
+
 
     def __create_test_secrets_path (self):
         
@@ -302,6 +317,23 @@ class SigmundTests(unittest.TestCase):
     def __remove_test_secrets_path (self):
         os.unlink(self.tmpFile)
         os.rmdir(self.tmpPath)
+
+class CustomSigmund(Sigmund):
+    """
+    Example of how Sigmund could be subclassed and the token template
+    can be overriden.
+    """
+
+    def serialiseToken (self, salt_hash, signature_hash, timestamp):
+        return signature_hash + salt_hash + timestamp
+
+    def unserialiseToken (self, token):
+
+        salt      = token[56:112]
+        signature = token[0:56]
+        timestamp = token[112:]
+
+        return [salt, signature, timestamp]
 
 if __name__ == "__main__":
     unittest.main()
