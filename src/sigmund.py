@@ -119,7 +119,7 @@ def generate_secrets_to_file (path):
     Returns the secrets it wrote to the file
     """
     
-    secrets = ['abcd', 'qwer']
+    secrets = generate_secrets(10)
 
     writer = open(path, 'w')
     writer.write(SECRETS_FILE_DELIMITER.join(secrets))
@@ -131,6 +131,7 @@ def generate_secrets_to_file (path):
 def generate_secrets (numberOfSecrets):
     """
     Generate random secrets
+    Returns a list of secrets
     """
 
     secrets = []
@@ -142,3 +143,13 @@ def generate_secrets (numberOfSecrets):
         secrets.append(secret)
 
     return secrets
+
+def load_secrets_from_file (path):
+
+    reader = open(path, 'r')
+    contents = reader.read()
+
+    if not contents:
+        raise Error("Secrets file at '" + path + "' is empty")
+    
+    return contents.split(SECRETS_FILE_DELIMITER)

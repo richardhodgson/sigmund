@@ -11,8 +11,12 @@ import os
 from sigmund import Sigmund
 from sigmund import generate_secrets_to_file
 from sigmund import generate_secrets
+from sigmund import load_secrets_from_file
 
 class SigmundTests(unittest.TestCase):
+
+    tmpPath = os.path.join(os.path.dirname(__file__), 'test_secrets')
+    tmpFile = os.path.join(tmpPath, 'some_secrets')
     
     def testSignatureGeneration (self):
         
@@ -198,34 +202,24 @@ class SigmundTests(unittest.TestCase):
         
     def testGenerateSecretsToFile (self):
         
-        tmpPath = os.path.join(os.path.dirname(__file__), 'test_secrets')
-        tmpFile = os.path.join(tmpPath, 'some_secrets')
-        
-        if (os.path.isfile(tmpFile)):
-            os.unlink(tmpFile)
-            
-        if (os.path.isdir(tmpPath)):
-            os.rmdir(tmpPath)
-        
-        os.mkdir(tmpPath)
-        
-        secrets = generate_secrets_to_file(tmpFile)
+        self.__create_test_secrets_path()
+
+        secrets = generate_secrets_to_file(self.tmpFile)
         
         self.assertTrue(
-            os.stat(tmpFile),
+            os.stat(self.tmpFile),
             "Secrets file has been created"
         )
         
-        generatedFile = open(tmpFile, 'r')
+        generatedFile = open(self.tmpFile, 'r')
         
         self.assertEquals(
             generatedFile.read(),
             ",".join(secrets),
             "Secrets have been written to the file"
         )
-        
-        os.unlink(tmpFile)
-        os.rmdir(tmpPath)
+
+        self.__remove_test_secrets_path()
         
     def testGenerateSecrets (self):
 
@@ -250,8 +244,34 @@ class SigmundTests(unittest.TestCase):
         )
 
     def testLoadSecretsFromFile (self):
-        pass
+
+        self.__create_test_secrets_path()
         
+        generatedSecrets = generate_secrets_to_file(self.tmpFile)
+
+        secrets = load_secrets_from_file(self.tmpFile)
+
+        self.assertEquals(
+            secrets,
+            generatedSecrets,
+            "Loaded secrets are same as generated ones"
+        )
+        
+        self.__remove_test_secrets_path()
+    
+    def __create_test_secrets_path (self):
+        
+        if (os.path.isfile(self.tmpFile)):
+            os.unlink(self.tmpFile)
+            
+        if (os.path.isdir(self.tmpPath)):
+            os.rmdir(self.tmpPath)
+        
+        os.mkdir(self.tmpPath)
+    
+    def __remove_test_secrets_path (self):
+        os.unlink(self.tmpFile)
+        os.rmdir(self.tmpPath)
 
 if __name__ == "__main__":
     unittest.main()
