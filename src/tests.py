@@ -256,9 +256,29 @@ class SigmundTests(unittest.TestCase):
             generatedSecrets,
             "Loaded secrets are same as generated ones"
         )
-        
+
         self.__remove_test_secrets_path()
     
+    def testValidateSignatureFromGeneratedSecrets (self):
+
+        self.__create_test_secrets_path()
+
+        generatedSecrets = generate_secrets_to_file(self.tmpFile)
+        
+        sigmund = Sigmund()
+        sigmund.secret = load_secrets_from_file(self.tmpFile);
+
+        testData = {"hello": "world"}
+
+        signature = sigmund.generate(testData)
+
+        self.assertTrue(
+            sigmund.validate(signature, testData),
+            "Can validate a signature with secrets loaded from file"
+        )
+
+        self.__remove_test_secrets_path()
+
     def __create_test_secrets_path (self):
         
         if (os.path.isfile(self.tmpFile)):
