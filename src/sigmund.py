@@ -1,8 +1,6 @@
 """
 TODO
- - add time based expiry
  - simple salt and signature positions (based on pieces... max 56/2)
- - rotating secrets (and secrets generation)
  - rotating positions (and position map generation)
 """
 import hashlib

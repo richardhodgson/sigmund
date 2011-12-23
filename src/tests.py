@@ -285,7 +285,7 @@ class SigmundTests(unittest.TestCase):
 
         s1.secret = s2.secret = 'abcd'
 
-        testData = {"hello": "world"}        
+        testData = {"hello": "world"}       
 
         signature = s1.generate(testData)
 
