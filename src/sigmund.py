@@ -68,7 +68,7 @@ class Sigmund():
         if (length < 122):
             return False
         
-        stripHashesFromToken = token[112:]
+        return True
     
     def __hasTokenExpired (self, timestamp):
         try:
@@ -79,9 +79,9 @@ class Sigmund():
         expiresAt = time.time() - self.tokenExpiryTime
         
         if timestamp < expiresAt:
-            return False
+            return True
         
-        return True
+        return False
         
     def __generateSignatureHash (self, params, salt, timestamp):
         
@@ -127,15 +127,6 @@ class Sigmund():
         timestamp = token[112:]
 
         return [salt, signature, timestamp]
-
-class Token():
-
-    params;
-
-    def setParams (self, params):
-        self.params = params
-    
-    def 
 
 def generate_secrets_to_file (path):
     """
