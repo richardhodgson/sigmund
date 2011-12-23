@@ -12,6 +12,8 @@ import time
 import re
 from datetime import datetime
 
+SECRETS_FILE_DELIMITER = ","
+
 class Sigmund():
     
     secret = ""
@@ -110,10 +112,18 @@ class Sigmund():
         for group in range(numberOfSecrets):
             if (tokenSeconds < ((group+1) * partitionSize)):
                 return secrets[group]
-  
-  
-  
-  
-  
-  
-  
+
+def generate_secrets_to_file (path):
+    """
+    Generates a secrets file
+    Returns the secrets it wrote to the file
+    """
+    
+    secrets = ['abcd', 'qwer']
+
+    writer = open(path, 'w')
+    writer.write(SECRETS_FILE_DELIMITER.join(secrets))
+    writer.close()
+    
+    return secrets
+    

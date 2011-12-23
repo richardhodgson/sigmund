@@ -6,8 +6,10 @@ TODO
 import unittest
 import math
 import time
-from dateutil.parser import parse
+import os
+
 from sigmund import Sigmund
+from sigmund import generate_secrets_to_file
 
 class SigmundTests(unittest.TestCase):
     
@@ -192,6 +194,40 @@ class SigmundTests(unittest.TestCase):
             sigmund.validate(token, testData),
             'can validate a token against multiple secrets'
         )
+        
+    def testGenerateSecretsToFile (self):
+        
+        tmpPath = os.path.join(os.path.dirname(__file__), 'test_secrets')
+        tmpFile = os.path.join(tmpPath, 'some_secrets')
+        
+        if (os.path.isfile(tmpFile)):
+            os.unlink(tmpFile)
+            
+        if (os.path.isdir(tmpPath)):
+            os.rmdir(tmpPath)
+        
+        os.mkdir(tmpPath)
+        
+        secrets = generate_secrets_to_file(tmpFile)
+        
+        self.assertTrue(
+            os.stat(tmpFile),
+            "Secrets file has been created"
+        )
+        
+        generatedFile = open(tmpFile, 'r')
+        
+        self.assertEquals(
+            generatedFile.read(),
+            ",".join(secrets),
+            "Secrets have been written to the file"
+        )
+        
+        os.unlink(tmpFile)
+        os.rmdir(tmpPath)
+        
+    def testLoadSecretsFromFile (self):
+        pass
         
 
 if __name__ == "__main__":
