@@ -36,12 +36,15 @@ class Sigmund():
         
         if not (self.__isTokenExpectedFormat(token)):
             return False
-        
+
         tokenParts = self.unserialiseToken(token)
 
         salt      = tokenParts[0]
         signature = tokenParts[1]
         timestamp = tokenParts[2]
+
+        if self.__hasTokenExpired(timestamp):
+            return False
         
         regenerated = self.__generateSignatureHash(params, salt, timestamp)
         
@@ -51,7 +54,6 @@ class Sigmund():
         return False
         
     def generatePlainSignature (self, keyvalues):
-        
         parts     = ["%s%s" % (k, v) for k, v in keyvalues.items()]
         return "".join(sorted(parts))
     
@@ -67,9 +69,10 @@ class Sigmund():
             return False
         
         stripHashesFromToken = token[112:]
-        
+    
+    def __hasTokenExpired (self, timestamp):
         try:
-            timestamp = int(stripHashesFromToken)
+            timestamp = int(timestamp)
         except ValueError:
             return False
         
@@ -125,6 +128,14 @@ class Sigmund():
 
         return [salt, signature, timestamp]
 
+class Token():
+
+    params;
+
+    def setParams (self, params):
+        self.params = params
+    
+    def 
 
 def generate_secrets_to_file (path):
     """
