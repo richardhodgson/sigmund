@@ -1,8 +1,3 @@
-"""
-TODO
- - different param types
- - secrets
-"""
 import unittest
 import math
 import time
