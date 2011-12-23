@@ -2,7 +2,9 @@
 TODO
  - simple salt and signature positions (based on pieces... max 56/2)
  - rotating positions (and position map generation)
- - hooks for token strategy (i/o) e.g. can be subclassed
+ - hooks for token template (i/o) e.g. can be subclassed
+ -- serialise / unserialise methods
+ -- use a template string, so position validation can still occur
 """
 import hashlib
 import random
