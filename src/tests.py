@@ -279,6 +279,21 @@ class SigmundTests(unittest.TestCase):
 
         self.__remove_test_secrets_path()
 
+    def testSeparateInstancs (self):
+
+        s1 = s2 = Sigmund()
+
+        s1.secret = s2.secret = 'abcd'
+
+        testData = {"hello": "world"}        
+
+        signature = s1.generate(testData)
+
+        self.assertTrue(
+            s2.validate(signature, testData),
+            "Signature isn't bound to the instance of Sigmund that generated it"
+        )
+
     def __create_test_secrets_path (self):
         
         if (os.path.isfile(self.tmpFile)):
