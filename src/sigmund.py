@@ -127,3 +127,18 @@ def generate_secrets_to_file (path):
     
     return secrets
     
+
+def generate_secrets (numberOfSecrets):
+    """
+    Generate random secrets
+    """
+
+    secrets = []
+    timestamp = str(int(math.floor(time.time())))
+
+    for i in range(numberOfSecrets):
+        randomNumber = int(math.ceil(random.uniform(i, 102400)))
+        secret = hashlib.sha224(str(randomNumber) + timestamp).hexdigest()
+        secrets.append(secret)
+
+    return secrets

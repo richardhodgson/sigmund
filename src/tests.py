@@ -10,6 +10,7 @@ import os
 
 from sigmund import Sigmund
 from sigmund import generate_secrets_to_file
+from sigmund import generate_secrets
 
 class SigmundTests(unittest.TestCase):
     
@@ -226,6 +227,28 @@ class SigmundTests(unittest.TestCase):
         os.unlink(tmpFile)
         os.rmdir(tmpPath)
         
+    def testGenerateSecrets (self):
+
+        secrets = generate_secrets(7)
+
+        self.assertEquals(
+            len(secrets),
+            7,
+            "Can generate expected number of secrets"
+        )
+
+        self.assertNotEquals(
+            secrets[0],
+            secrets[1],
+            "Generated secrets are different"
+        )
+
+        self.assertEquals(
+            len(secrets[2]),
+            56,
+            "Generated secrets are a particular length"
+        )
+
     def testLoadSecretsFromFile (self):
         pass
         
