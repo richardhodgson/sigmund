@@ -254,7 +254,7 @@ class SigmundTests(unittest.TestCase):
 
         self.__remove_test_secrets_path()
     
-    def testValidateSignatureFromGeneratedSecrets (self):
+    def testValidatetokenFromGeneratedSecrets (self):
 
         self.__create_test_secrets_path()
 
@@ -265,16 +265,16 @@ class SigmundTests(unittest.TestCase):
 
         testData = {"hello": "world"}
 
-        signature = sigmund.generate(testData)
+        token = sigmund.generate(testData)
 
         self.assertTrue(
-            sigmund.validate(signature, testData),
-            "Can validate a signature with secrets loaded from file"
+            sigmund.validate(token, testData),
+            "Can validate a token with secrets loaded from file"
         )
 
         self.__remove_test_secrets_path()
 
-    def testSeparateInstancs (self):
+    def testSeparateInstances (self):
 
         s1 = s2 = Sigmund()
 
@@ -282,11 +282,11 @@ class SigmundTests(unittest.TestCase):
 
         testData = {"hello": "world"}       
 
-        signature = s1.generate(testData)
+        token = s1.generate(testData)
 
         self.assertTrue(
-            s2.validate(signature, testData),
-            "Signature isn't bound to the instance of Sigmund that generated it"
+            s2.validate(token, testData),
+            "token isn't bound to the instance of Sigmund that generated it"
         )
 
     def __create_test_secrets_path (self):
