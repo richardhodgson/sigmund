@@ -181,6 +181,24 @@ class SigmundTests(unittest.TestCase):
             get_rotated_secret(secrets, 86400),
             'midnight chooses the first secret'
         )
+
+        # Assert the expected secret for each second of a day with the test data.
+        for second in range(86400):
+            
+            if second < 21600:
+                expected = 'a'
+            elif second < 43200:
+                expected = 'b'
+            elif second < 64800:
+                expected = 'c'
+            elif second < 86400:
+                expected = 'd' 
+
+            self.assertEquals(
+                expected,
+                get_rotated_secret(secrets, second),
+                'get_rotated_secret returns expected secret for ' + str(second)
+            )
         
     def testRotatingSecrets (self):
         

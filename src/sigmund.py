@@ -136,17 +136,14 @@ def get_rotated_secret (secrets, timestamp):
         
         The secret is return for the group that is matched
         
-        n.b. I'm sure theres a better way to do this than a loop...
         """
         fullDay = 86400
-        
+         
         numberOfSecrets = len(secrets)
         tokenDateTime   = datetime.fromtimestamp(float(timestamp))
         
-        tokenSeconds    = (tokenDateTime.hour * 3600) + (tokenDateTime.minute * 60) + tokenDateTime.second
+        tokenSeconds    = ((tokenDateTime.hour-1) * 3600) + (tokenDateTime.minute * 60) + tokenDateTime.second
         partitionSize   = fullDay / numberOfSecrets
-        
-        for group in range(numberOfSecrets):
-            if (tokenSeconds < ((group+1) * partitionSize)):
-                return secrets[group]
+
+        return secrets[tokenSeconds / partitionSize]
 
