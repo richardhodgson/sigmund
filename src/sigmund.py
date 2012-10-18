@@ -1,9 +1,3 @@
-"""
-TODO
- - simple salt and signature positions (based on pieces... max 56/2)
- - rotating positions (and position map generation)
- - hooks for token template (i/o) e.g. can be subclassed
-"""
 import hashlib
 import random
 import math
