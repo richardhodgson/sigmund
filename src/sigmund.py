@@ -76,34 +76,10 @@ class Sigmund():
         secret         = self.secret
         
         if isinstance(secret, list):
-            secret = self.getRotatedSecret(secret, timestamp)
+            secret = get_rotated_secret(secret, timestamp)
         
         return self.__hash(salt + plainSignature + timestamp + secret)
-        
-    def getRotatedSecret (self, secrets, timestamp):
-        """
-        Takes a list of secrets and chooses one depending on timestamp.
-        
-        Choice is made by dividing a day by number of secrets to create groups.
-        The timestamp is checked for the time of day it was created at, which
-        is then mapped to the relevant group.
-        
-        The secret is return for the group that is matched
-        
-        n.b. I'm sure theres a better way to do this than a loop...
-        """
-        fullDay = 86400
-        
-        numberOfSecrets = len(secrets)
-        tokenDateTime   = datetime.fromtimestamp(float(timestamp))
-        
-        tokenSeconds    = (tokenDateTime.hour * 3600) + (tokenDateTime.minute * 60) + tokenDateTime.second
-        partitionSize   = fullDay / numberOfSecrets
-        
-        for group in range(numberOfSecrets):
-            if (tokenSeconds < ((group+1) * partitionSize)):
-                return secrets[group]
-
+    
     def serialiseToken (self, salt_hash, signature_hash, timestamp):
         return salt_hash + signature_hash + timestamp
 
@@ -155,3 +131,28 @@ def load_secrets_from_file (path):
         raise Error("Secrets file at '" + path + "' is empty")
     
     return contents.split(SECRETS_FILE_DELIMITER)
+
+def get_rotated_secret (secrets, timestamp):
+        """
+        Takes a list of secrets and chooses one depending on timestamp.
+        
+        Choice is made by dividing a day by number of secrets to create groups.
+        The timestamp is checked for the time of day it was created at, which
+        is then mapped to the relevant group.
+        
+        The secret is return for the group that is matched
+        
+        n.b. I'm sure theres a better way to do this than a loop...
+        """
+        fullDay = 86400
+        
+        numberOfSecrets = len(secrets)
+        tokenDateTime   = datetime.fromtimestamp(float(timestamp))
+        
+        tokenSeconds    = (tokenDateTime.hour * 3600) + (tokenDateTime.minute * 60) + tokenDateTime.second
+        partitionSize   = fullDay / numberOfSecrets
+        
+        for group in range(numberOfSecrets):
+            if (tokenSeconds < ((group+1) * partitionSize)):
+                return secrets[group]
+

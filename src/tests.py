@@ -7,6 +7,7 @@ from sigmund import Sigmund
 from sigmund import generate_secrets_to_file
 from sigmund import generate_secrets
 from sigmund import load_secrets_from_file
+from sigmund import get_rotated_secret
 
 class SigmundTests(unittest.TestCase):
 
@@ -147,37 +148,37 @@ class SigmundTests(unittest.TestCase):
         
         self.assertEquals(
             'a',
-            sigmund.getRotatedSecret(secrets, 1),
+            get_rotated_secret(secrets, 1),
             '1am hour chooses the first secret'
         )
         
         self.assertEquals(
             'a',
-            sigmund.getRotatedSecret(secrets, 3600),
+            get_rotated_secret(secrets, 3600),
             '2am hour chooses the first secret'
         )
         
         self.assertEquals(
             'b',
-            sigmund.getRotatedSecret(secrets, 21600),
+            get_rotated_secret(secrets, 21600),
             '6am hour chooses the second secret'
         )
         
         self.assertEquals(
             'c',
-            sigmund.getRotatedSecret(secrets, 43200),
+            get_rotated_secret(secrets, 43200),
             '12pm chooses the third secret'
         )
         
         self.assertEquals(
             'd',
-            sigmund.getRotatedSecret(secrets, 64800),
+            get_rotated_secret(secrets, 64800),
             '6pm chooses the final secret'
         )
         
         self.assertEquals(
             'a',
-            sigmund.getRotatedSecret(secrets, 86400),
+            get_rotated_secret(secrets, 86400),
             'midnight chooses the first secret'
         )
         
