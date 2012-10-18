@@ -7,6 +7,7 @@ from sigmund import Sigmund
 from sigmund import generate_secrets_to_file
 from sigmund import generate_secrets
 from sigmund import load_secrets_from_file
+from sigmund import get_rotated_secret
 
 class SigmundTests(unittest.TestCase):
 
@@ -147,39 +148,57 @@ class SigmundTests(unittest.TestCase):
         
         self.assertEquals(
             'a',
-            sigmund.getRotatedSecret(secrets, 1),
+            get_rotated_secret(secrets, 1),
             '1am hour chooses the first secret'
         )
         
         self.assertEquals(
             'a',
-            sigmund.getRotatedSecret(secrets, 3600),
+            get_rotated_secret(secrets, 3600),
             '2am hour chooses the first secret'
         )
         
         self.assertEquals(
             'b',
-            sigmund.getRotatedSecret(secrets, 21600),
+            get_rotated_secret(secrets, 21600),
             '6am hour chooses the second secret'
         )
         
         self.assertEquals(
             'c',
-            sigmund.getRotatedSecret(secrets, 43200),
+            get_rotated_secret(secrets, 43200),
             '12pm chooses the third secret'
         )
         
         self.assertEquals(
             'd',
-            sigmund.getRotatedSecret(secrets, 64800),
+            get_rotated_secret(secrets, 64800),
             '6pm chooses the final secret'
         )
         
         self.assertEquals(
             'a',
-            sigmund.getRotatedSecret(secrets, 86400),
+            get_rotated_secret(secrets, 86400),
             'midnight chooses the first secret'
         )
+
+        # Assert the expected secret for each second of a day with the test data.
+        for second in range(86400):
+            
+            if second < 21600:
+                expected = 'a'
+            elif second < 43200:
+                expected = 'b'
+            elif second < 64800:
+                expected = 'c'
+            elif second < 86400:
+                expected = 'd' 
+
+            self.assertEquals(
+                expected,
+                get_rotated_secret(secrets, second),
+                'get_rotated_secret returns expected secret for ' + str(second)
+            )
         
     def testRotatingSecrets (self):
         
@@ -280,7 +299,7 @@ class SigmundTests(unittest.TestCase):
 
         s1.secret = s2.secret = 'abcd'
 
-        testData = {"hello": "world"}       
+        testData = {"hello": "world"}
 
         token = s1.generate(testData)
 
@@ -288,6 +307,21 @@ class SigmundTests(unittest.TestCase):
             s2.validate(token, testData),
             "token isn't bound to the instance of Sigmund that generated it"
         )
+    
+    def testSubclassTokenTemplate (self):
+
+        customSigmund = CustomSigmund()
+        customSigmund.secret = 'abcd'
+
+        testData = {"hello": "world"}
+
+        token = customSigmund.generate(testData)
+
+        self.assertTrue(
+            customSigmund.validate(token, testData),
+            "subclasses can override the token template"
+        )
+
 
     def __create_test_secrets_path (self):
         
@@ -302,6 +336,23 @@ class SigmundTests(unittest.TestCase):
     def __remove_test_secrets_path (self):
         os.unlink(self.tmpFile)
         os.rmdir(self.tmpPath)
+
+class CustomSigmund(Sigmund):
+    """
+    Example of how Sigmund could be subclassed and the token template
+    can be overriden.
+    """
+
+    def serialiseToken (self, salt_hash, signature_hash, timestamp):
+        return signature_hash + salt_hash + '====' + timestamp
+
+    def unserialiseToken (self, token):
+
+        salt      = token[56:112]
+        signature = token[0:56]
+        timestamp = token[116:]
+
+        return [salt, signature, timestamp]
 
 if __name__ == "__main__":
     unittest.main()
