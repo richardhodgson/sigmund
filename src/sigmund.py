@@ -24,11 +24,11 @@ class Sigmund():
         salt_hash      = self.__hash(salt)
         signature_hash = self.__generateSignatureHash(params, salt_hash, timestamp)
         
-        return self.serialiseToken(salt_hash, signature_hash, str(timestamp))
+        return self.serialise(salt_hash, signature_hash, str(timestamp))
         
     def validate (self, token, params):
         
-        tokenParts = self.unserialiseToken(token)
+        tokenParts = self.unserialise(token)
 
         salt      = tokenParts[0]
         signature = tokenParts[1]
@@ -74,10 +74,10 @@ class Sigmund():
         
         return self.__hash(salt + plainSignature + timestamp + secret)
     
-    def serialiseToken (self, salt_hash, signature_hash, timestamp):
+    def serialise (self, salt_hash, signature_hash, timestamp):
         return salt_hash + signature_hash + timestamp
 
-    def unserialiseToken (self, token):
+    def unserialise (self, token):
 
         salt      = token[0:56]
         signature = token[56:112]

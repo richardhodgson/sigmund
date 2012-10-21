@@ -339,6 +339,12 @@ class SigmundTests(unittest.TestCase):
 
         token = customSigmund.generate(testData)
 
+        self.assertEquals(
+            124,
+            len(token),
+            "Custom generated token is longer than standard token"
+        )
+
         self.assertTrue(
             customSigmund.validate(token, testData),
             "subclasses can override the token template"
@@ -365,10 +371,10 @@ class CustomSigmund(Sigmund):
     can be overriden.
     """
 
-    def serialiseToken (self, salt_hash, signature_hash, timestamp):
+    def serialise (self, salt_hash, signature_hash, timestamp):
         return signature_hash + "|" + salt_hash + "|" + timestamp
 
-    def unserialiseToken (self, token):
+    def unserialise (self, token):
 
         salt      = token[57:113]
         signature = token[0:56]
