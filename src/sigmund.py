@@ -18,7 +18,7 @@ class Sigmund():
         signature = self.generatePlainSignature(params)
         timestamp = str(int(math.floor(time.time())))
         
-        randomNumber = int(math.ceil(random.uniform(1, self.random_amount)))
+        randomNumber = generateRandomNumber(1, self.random_amount)
         salt         = signature + str(randomNumber) + timestamp
         
         salt_hash      = self.__hash(salt)
@@ -110,7 +110,7 @@ def generate_secrets (numberOfSecrets):
     timestamp = str(int(math.floor(time.time())))
 
     for i in range(numberOfSecrets):
-        randomNumber = int(math.ceil(random.uniform(i, 102400)))
+        randomNumber = generateRandomNumber(i, 102400)
         secret = hashlib.sha224(str(randomNumber) + timestamp).hexdigest()
         secrets.append(secret)
 
@@ -146,4 +146,7 @@ def get_rotated_secret (secrets, timestamp):
         partitionSize   = fullDay / numberOfSecrets
 
         return secrets[tokenSeconds / partitionSize]
+
+def generateRandomNumber (min, max):
+    return int(math.ceil(random.uniform(min, max)))
 
