@@ -273,12 +273,6 @@ class SigmundTests(unittest.TestCase):
             "Generated secrets are different"
         )
 
-        self.assertEquals(
-            len(secrets[2]),
-            56,
-            "Generated secrets are a particular length"
-        )
-
     def testLoadSecretsFromFile (self):
 
         self.__create_test_secrets_path()

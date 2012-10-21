@@ -107,11 +107,10 @@ def generate_secrets (numberOfSecrets):
     """
 
     secrets = []
-    timestamp = str(int(math.floor(time.time())))
+    sigmund = Sigmund()
 
     for i in range(numberOfSecrets):
-        randomNumber = generateRandomNumber(i, 102400)
-        secret = hashlib.sha224(str(randomNumber) + timestamp).hexdigest()
+        secret = sigmund.generate({i: generateRandomNumber(i, 102400)})
         secrets.append(secret)
 
     return secrets
