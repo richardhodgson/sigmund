@@ -366,13 +366,13 @@ class CustomSigmund(Sigmund):
     """
 
     def serialiseToken (self, salt_hash, signature_hash, timestamp):
-        return signature_hash + salt_hash + '====' + timestamp
+        return signature_hash + "|" + salt_hash + "|" + timestamp
 
     def unserialiseToken (self, token):
 
-        salt      = token[56:112]
+        salt      = token[57:113]
         signature = token[0:56]
-        timestamp = token[116:]
+        timestamp = token[114:]
 
         return [salt, signature, timestamp]
 
