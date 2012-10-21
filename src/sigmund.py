@@ -85,13 +85,13 @@ class Sigmund():
 
         return [salt, signature, timestamp]
 
-def generate_secrets_to_file (path):
+def generate_secrets_to_file (path, numberOfSecrets=10):
     """
     Generates a secrets file
     Returns the secrets it wrote to the file
     """
     
-    secrets = generate_secrets(10)
+    secrets = generate_secrets(numberOfSecrets)
 
     writer = open(path, 'w')
     writer.write(SECRETS_FILE_DELIMITER.join(secrets))

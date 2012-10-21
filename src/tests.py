@@ -235,6 +235,28 @@ class SigmundTests(unittest.TestCase):
 
         self.__remove_test_secrets_path()
         
+    def testGenerateSecretsToFileNmberOfSecretsParameter (self):
+        
+        self.__create_test_secrets_path()
+
+        secrets = generate_secrets_to_file(self.tmpFile, 23)
+
+        self.assertEquals(
+            23,
+            len(secrets),
+            "Expected number of secrets returned"
+        )
+        
+        generatedFile = open(self.tmpFile, 'r')
+        
+        self.assertEquals(
+            22,
+            generatedFile.read().count(","),
+            "Expected numbr of secrets have been written to the file"
+        )
+
+        self.__remove_test_secrets_path()
+        
     def testGenerateSecrets (self):
 
         secrets = generate_secrets(7)
