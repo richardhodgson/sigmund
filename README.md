@@ -77,3 +77,8 @@ The `Sigmund` class can be subclassed to override the serialised token structure
 
 The `serialise` method is passed the `salt`, `signature` and `timestamp` and should return a string combining all three. The `unserialise` method will be called with the `token` and expected to return an array of the original parts.
 
+### Footnote
+
+I built this during a train journey, for a friend's project. Although the implementation isn't too complicated, I couldn't find many examples of libraries that were written in Python and that wern't coupled to some webapp framework.
+
+I have no idea why I named it Sigmund - it was a long train journey.
